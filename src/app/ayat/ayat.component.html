@@ -1,0 +1,93 @@
+<div class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Qur'an Ayat Management</h1>
+
+  <!-- Surah Selection -->
+  <div class="bg-white dark:bg-gray-800 shadow-md rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
+    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Surah</label>
+    <select
+      class="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+      [(ngModel)]="selectedSurahId"
+      (change)="getAyat()"
+    >
+      <option value="" disabled selected>-- Choose a Surah --</option>
+      <option *ngFor="let surah of surahs" [value]="surah.id">
+        {{ surah?.name_in_english }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Ayat Table -->
+  <div *ngIf="ayats.length > 0" class="bg-white dark:bg-gray-800 shadow-xl rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Ayats of Selected Surah</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Manage ayats and their keywords</p>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left text-gray-600 dark:text-gray-300">
+        <thead class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 uppercase text-xs font-semibold">
+        <tr>
+          <th class="px-6 py-3 rounded-tl-lg">#</th>
+          <th class="px-6 py-3">Arabic Text</th>
+          <th class="px-6 py-3">Bangla Translation</th>
+          <th class="px-6 py-3 text-right rounded-tr-lg">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr
+          *ngFor="let ayat of ayats; let i = index"
+          class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
+        >
+          <td class="px-6 py-3 font-medium text-gray-900 dark:text-white">{{ i + 1 }}</td>
+          <td class="px-6 py-3">{{ ayat.arabic }}</td>
+          <td class="px-6 py-3">{{ ayat.bengali_translate || '-' }}</td>
+          <td class="px-6 py-3 text-right">
+            <button
+              (click)="openKeywordModal(ayat)"
+              class="text-blue-600 hover:underline text-sm font-medium"
+            >
+              Add Keyword
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="selectedSurahId && ayats.length === 0" class="text-center text-gray-500 dark:text-gray-400 mt-10">
+    No ayats found for this Surah.
+  </div>
+
+</div>
+
+<!-- Modal Wrapper -->
+<div *ngIf="showKeywordModal" class="fixed inset-0 z-50 flex items-start justify-center mt-20 pointer-events-none">
+  <!-- Modal Box -->
+  <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6 pointer-events-auto">
+    <button
+      class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+      (click)="closeKeywordModal()"
+    >
+      ✕
+    </button>
+
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      Add Keyword for Ayat #{{ selectedAyat?.ayat_no_english }}
+    </h3>
+
+    <input
+      type="text"
+      [(ngModel)]="keyword"
+      placeholder="Enter keyword"
+      class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none dark:bg-gray-900 dark:text-white mb-4"
+    />
+
+    <button
+      (click)="saveKeyword()"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition-all"
+    >
+      Save Keyword
+    </button>
+  </div>
+</div>

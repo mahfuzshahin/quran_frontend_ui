@@ -1,0 +1,93 @@
+<!--<div class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">-->
+<!--  <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Video Management</h1>-->
+
+  <!-- Card Container -->
+  <div class="bg-white dark:bg-gray-800 shadow-xl rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+
+    <!-- Card Header -->
+    <div class="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+      <div>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Videos</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Manage videos and their status</p>
+      </div>
+      <button (click)="openModal()" class="bg-blue-600 text-white px-5 py-2 rounded-sm hover:bg-blue-700 transition-all shadow">
+        Add Video
+      </button>
+    </div>
+
+    <!-- Video Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left text-gray-600 dark:text-gray-300">
+        <thead class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 uppercase text-xs font-semibold">
+        <tr>
+          <th class="px-6 py-3 rounded-tl-lg">Name</th>
+          <th class="px-6 py-3">Description</th>
+          <th class="px-6 py-3">URL</th>
+          <th class="px-6 py-3 text-right rounded-tr-lg">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let value of news.videos" class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all rounded-sm">
+          <td class="px-6 py-3 font-medium text-gray-900 dark:text-white">{{ value.title }}</td>
+          <td class="px-6 py-3">{{ value.caption || '-' }}</td>
+          <td class="px-6 py-3">{{ value.url || '-' }}</td>
+<!--          <td class="px-6 py-3">-->
+<!--            <span *ngIf="value.active" class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full dark:bg-green-900 dark:text-green-300">Active</span>-->
+<!--            <span *ngIf="!value.active" class="bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full dark:bg-red-900 dark:text-red-300">Inactive</span>-->
+<!--          </td>-->
+          <td class="px-6 py-3 flex justify-end items-center space-x-3">
+            <button (click)="editVideo(value)" class="text-blue-600 hover:underline text-sm font-medium">Edit</button>
+            <button (click)="deleteVideo(value)" class="text-red-600 hover:underline text-sm font-medium">Delete</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<!--</div>-->
+
+<!-- Modal -->
+<div *ngIf="modalOpen" class="fixed inset-0 z-50 flex justify-center items-start pt-24 bg-black/30">
+  <div class="bg-white dark:bg-gray-900 rounded-xl w-full max-w-md p-8 shadow-2xl border border-gray-200 dark:border-gray-700 pointer-events-auto animate-fadeIn">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Add Video</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Fill in the details to add a new video</p>
+
+    <form #myForm="ngForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+        <input type="text" [(ngModel)]="video.title" #title="ngModel" name="title" placeholder="Enter video name"
+               class="w-full px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400" required>
+        <div>
+          <small *ngIf="title.invalid && formSubmitted" class="text-red-600 dark:text-red-400">Title is a required field</small>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Caption</label>
+        <textarea [(ngModel)]="video.caption" name="description" placeholder="Enter description"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 resize-none"></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label>
+        <input type="url" [(ngModel)]="video.url" #url="ngModel" name="url" placeholder="Enter video URL"
+               class="w-full px-4 py-2 border border-gray-300 rounded-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400" required>
+        <div>
+          <small *ngIf="url.invalid && formSubmitted" class="text-red-600 dark:text-red-400">Title is a required field</small>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2" *ngIf="isUpdateButton">
+        <input type="checkbox" [(ngModel)]="video.active" name="active" class="form-checkbox h-5 w-5 text-blue-600 dark:text-blue-400">
+        <span class="text-gray-700 dark:text-gray-300 text-sm">Active</span>
+      </div>
+
+      <div class="flex justify-end space-x-3 pt-4">
+
+        <button type="button" (click)="closeModal()" class="px-3 py-1 rounded-sm bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors shadow-sm">Cancel</button>
+        <button type="submit" (click)="postVideo()" *ngIf="isSaveButton" class="px-3 py-1 rounded-sm bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm">Save</button>
+        <button type="submit" (click)="puttVideo()" *ngIf="isUpdateButton" class="px-3 py-1 rounded-sm bg-green-600 text-white hover:bg-green-700 transition-colors shadow-sm">Update</button>
+
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="p-4 max-w-5xl mx-auto">
+
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">{{ news.title }}</h1>
+
+  <div class="mb-4 text-gray-700 dark:text-gray-300">
+    <span *ngIf="news.category">Category: {{ news.category.name }}</span>
+    <span *ngIf="news.author"> | Author: {{ news.author.name }}</span>
+    <span *ngIf="news.publishAt"> | Published: {{ news.publishAt }}</span>
+  </div>
+
+  <div class="mb-6">
+    <img *ngIf="news.featureImageUrl" [src]="news.featureImageUrl" alt="Feature Image" class="w-full rounded-lg mb-4">
+    <p class="text-gray-800 dark:text-gray-200" [innerHTML]="news.content"></p>
+  </div>
+
+
+  <!-- Gallery Section -->
+<!--  <section *ngIf="news.galleries?.length" class="mt-6">-->
+<!--    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">Gallery</h2>-->
+<!--    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">-->
+<!--      <div *ngFor="let media of news.galleries" class="border rounded-md overflow-hidden">-->
+<!--        <img [src]="media.fileUrl" alt="Gallery Image" class="w-full h-32 object-cover">-->
+<!--        <p class="text-sm text-gray-700 dark:text-gray-300 p-1 truncate">{{ media.title }}</p>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </section>-->
+  <section *ngIf="news.galleries?.length" class="mt-6 w-full relative">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3 text-center">Gallery</h2>
+    <div class="relative w-full">
+      <!-- Image with overlay -->
+      <div class="relative w-full max-h-[600px] overflow-hidden rounded-lg">
+        <img [src]="news.galleries[currentIndex].fileUrl"
+             alt="Gallery Image"
+             class="w-full h-[600px] object-cover">
+
+        <!-- Blackish gradient overlay at bottom -->
+        <div class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
+          <p class="text-lg text-white font-semibold">{{ news.galleries[currentIndex].title }}</p>
+          <p class="text-sm text-gray-200">{{ news.galleries[currentIndex].caption }}</p>
+        </div>
+      </div>
+
+      <!-- Left Arrow -->
+      <button (click)="prev()"
+              class="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-200/70 dark:bg-gray-700/70 rounded-full p-3 hover:bg-gray-300 dark:hover:bg-gray-600 transition text-2xl">
+        ◀
+      </button>
+
+      <!-- Right Arrow -->
+      <button (click)="next()"
+              class="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-200/70 dark:bg-gray-700/70 rounded-full p-3 hover:bg-gray-300 dark:hover:bg-gray-600 transition text-2xl">
+        ▶
+      </button>
+    </div>
+  </section>
+
+
+
+
+
+
+</div>

@@ -1,0 +1,35 @@
+/* --- Light Mode (Default) --- */
+.active {
+  /* Subtle Gray Background: Tailwind's bg-gray-100 or 200 */
+  background-color: #f3f4f6 !important; /* bg-gray-100 */
+
+  /* Darker Text and Icon Color: Tailwind's text-gray-900 */
+  color: #111827 !important;
+}
+
+/* Ensure the SVG icon and text follow the color change */
+.active svg,
+.active span {
+  color: #111827 !important; /* text-gray-900 */
+}
+
+
+/* --- Dark Mode --- */
+.dark .active {
+  /* Darker Gray Background for the dark theme */
+  background-color: #374151 !important; /* A dark gray, like bg-gray-700 */
+
+  /* White/Light Text for the dark theme */
+  color: #f9fafb !important; /* text-gray-50 */
+}
+
+.dark .active svg,
+.dark .active span {
+  color: #f9fafb !important; /* text-gray-50 */
+}
+
+/* Ensure the icon doesn't revert color on hover if it uses group-hover */
+.active svg.group-hover\\:text-gray-900 {
+  /* This overrides the default group-hover behavior */
+  color: inherit !important;
+}

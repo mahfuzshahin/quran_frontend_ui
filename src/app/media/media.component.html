@@ -1,0 +1,48 @@
+<div class="p-6">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Media Library</h1>
+    <button (click)="openModal()" class="bg-blue-600 text-white px-3 py-1 text-sm rounded-sm hover:bg-blue-700 transition-colors shadow-sm">
+      Upload Image
+    </button>
+  </div>
+
+  <!-- Images Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div *ngFor="let media of mediaList" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-2 flex flex-col items-center relative shadow-sm rounded-sm hover:shadow-md transition-shadow">
+
+      <!-- Image -->
+      <img *ngIf="media.type === 'image'" [src]="media.fileUrl" alt="Image" class="w-full h-40 object-cover mb-2 rounded-sm border border-gray-300 dark:border-gray-600">
+
+      <!-- Filename -->
+      <p class="text-sm text-gray-700 dark:text-gray-300 truncate w-full text-center">{{ media.filePath | slice: -20 }}</p>
+
+      <!-- Delete Button -->
+<!--      <button (click)="deleteMedia(media.id)" class="absolute top-1 right-1 bg-red-600 text-white text-xs px-1 py-0.5 rounded-sm hover:bg-red-700 shadow-sm">X</button>-->
+    </div>
+  </div>
+
+</div>
+
+<!-- Upload Modal -->
+<div *ngIf="modalOpen" class="fixed inset-0 z-50 flex justify-center items-start pt-24 bg-black bg-opacity-20">
+  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-6 shadow-lg w-full max-w-md rounded-sm">
+
+    <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Upload Image</h2>
+
+    <!-- File Input & Preview -->
+    <input type="file" (change)="onFileSelected($event)" accept="image/*" class="w-full border border-gray-300 dark:border-gray-600 p-2 mb-4 rounded-sm">
+
+    <div *ngIf="selectedFile" class="mb-4 flex justify-center">
+      <img [src]="previewUrl" alt="Preview" class="w-48 h-48 object-cover border border-gray-300 dark:border-gray-600 rounded-sm shadow-sm">
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-end space-x-2">
+      <button (click)="closeModal()" class="px-3 py-1 text-sm bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors rounded-sm shadow-sm">Cancel</button>
+      <button (click)="uploadFile()" class="px-3 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700 transition-colors rounded-sm shadow-sm">Upload</button>
+    </div>
+
+  </div>
+</div>

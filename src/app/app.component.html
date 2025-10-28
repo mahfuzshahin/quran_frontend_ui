@@ -1,0 +1,13 @@
+<ng-container *ngIf="isLoggedIn$ | async; else loginLayout">
+  <app-header></app-header>
+  <div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <app-nav></app-nav>
+    <div id="main-content" class="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #loginLayout>
+  <router-outlet></router-outlet>
+</ng-template>
