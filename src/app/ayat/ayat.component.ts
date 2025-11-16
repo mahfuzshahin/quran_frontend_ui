@@ -5,6 +5,10 @@ import {JsonPipe, NgForOf, NgIf} from "@angular/common";
 import {Ayat} from "../model/ayat";
 import {AyatService} from "../service/ayat.service";
 import {ToastrService} from "ngx-toastr";
+import {TagService} from "../service/tag.service";
+import {NgSelectModule} from "@ng-select/ng-select";
+import {KeywordService} from "../service/keyword.service";
+import {Keyword} from "../model/keyword";
 
 @Component({
   selector: 'app-ayat',
@@ -14,7 +18,8 @@ import {ToastrService} from "ngx-toastr";
     NgForOf,
     NgIf,
     ReactiveFormsModule,
-    JsonPipe
+    JsonPipe,
+    NgSelectModule
   ],
   templateUrl: './ayat.component.html',
   styleUrl: './ayat.component.css'
@@ -22,16 +27,22 @@ import {ToastrService} from "ngx-toastr";
 export class AyatComponent implements OnInit{
   surahs:any=[];
   ayats: any[] = [];
+  tags: any[] = [];
   ayat:any = new Ayat();
+  keyword = new Keyword();
+  // keyword: any = {};
   selectedSurahId: number | null = null;
+  selectedTagId:any;
 
   showKeywordModal: boolean = false;
   selectedAyat: any = null;
-  keyword: string = '';
-  constructor(private surahService: SurahService, private ayatService: AyatService, private toastr: ToastrService) {
+  constructor(private surahService: SurahService, private tagService: TagService,
+              private keywordService: KeywordService,
+              private ayatService: AyatService, private toastr: ToastrService) {
   }
   ngOnInit() {
-    this.getSurah()
+    this.getSurah();
+    this.getTag();
   }
 
   getSurah(){
@@ -50,10 +61,15 @@ export class AyatComponent implements OnInit{
       }
     });
   }
+  getTag(){
+    this.tagService.getTag().subscribe((response:any)=>{
+      this.tags = response.data;
+    })
+  }
 
   openKeywordModal(ayat: any) {
+    this.keyword = new Keyword();
     this.selectedAyat = ayat;
-    this.keyword = '';
     this.showKeywordModal = true;
   }
 
@@ -62,24 +78,24 @@ export class AyatComponent implements OnInit{
   }
 
   saveKeyword() {
-    // if (!this.keyword.trim()) {
-    //   alert('Please enter a keyword.');
-    //   return;
-    // }
+    // console.log(this.keyword.tag_id)
+    // if (!this.selectedAyat || !this.keyword.tag_id) return;
     //
     // const payload = {
     //   ayat_id: this.selectedAyat.id,
-    //   keyword: this.keyword,
+    //   tag_id: this.keyword.tag_id
     // };
-    //
-    // this.ayatService.addKeyword(payload).subscribe({
-    //   next: (res: any) => {
-    //     alert('Keyword added successfully!');
-    //     this.showKeywordModal = false;
-    //   },
-    //   error: () => {
-    //     alert('Failed to add keyword.');
-    //   },
-    // });
+    this.keyword.ayat_id= this.selectedAyat.id;
+    this.keywordService.postKeyword(this.keyword).subscribe((response: any) => {
+      if (response.status) {
+        this.selectedAyat.keywords = this.selectedAyat.keywords || [];
+        this.selectedAyat.keywords.push(response.data);
+
+        this.toastr.success(response.message);
+        this.showKeywordModal = false;
+        this.keyword = new Keyword(); // reset
+      }
+    });
   }
+
 }

@@ -1,5 +1,5 @@
 export class Tag{
   id:number | undefined;
-  name:string | undefined;
-  active:boolean = true;
+  bengali_name:string | undefined;
+  english_name:string | undefined;
 }
