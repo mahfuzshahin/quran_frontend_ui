@@ -25,7 +25,7 @@ export class KeywordService {
       })
     );
   }
-  postKeyword(keyword: Keyword){
+  postKeywordTest(keyword: Keyword){
     const headers = this.authService.getAuthHeaders(true);
     if (!headers) {
       this.toastr.error('You are not authenticated.');
@@ -38,9 +38,47 @@ export class KeywordService {
       }else{
         this.toastr.error(error.error.error);
       }
-      return of()
+      return of(true)
     }))
   }
+
+  postKeyword(keyword: Keyword) {
+    const headers = this.authService.getAuthHeaders(true);
+
+    if (!headers) {
+      this.toastr.error('You are not authenticated.');
+      return of(null);
+    }
+
+    return this.httpClient
+      .post(environment.api_url + '/keywords', keyword, { headers })
+      .pipe(
+        catchError((error: any): Observable<any> => {
+
+          // Laravel Validation Error (duplicate tag, required field, etc.)
+          if (error.status === 422) {
+            const msg =
+              error.error?.errors?.tag_id?.[0] ||
+              error.error?.message ||
+              "Validation failed";
+            this.toastr.warning(msg);
+          }
+
+          // Custom backend 406
+          else if (error.status === 406) {
+            this.toastr.warning(error.error.message);
+          }
+
+          // Other errors
+          else {
+            this.toastr.error("Something went wrong");
+          }
+
+          return of(null); // Important: avoid breaking subscription
+        })
+      );
+  }
+
 
   putAyat(ayat: Ayat, id:any){
     const headers = this.authService.getAuthHeaders(true);
@@ -58,16 +96,15 @@ export class KeywordService {
       return of();
     }))
   }
-  deleteAyat(id: number) {
+  deleteKeyword(id: number) {
     const headers = this.authService.getAuthHeaders(true);
     if (!headers) {
       this.toastr.error('You are not authenticated.');
       return of(null); // return observable to avoid TS error
     }
 
-    return this.httpClient.delete(`${environment.api_url}/ayat/${id}`, { headers }).pipe(
+    return this.httpClient.delete(`${environment.api_url}/keywords/${id}`, { headers }).pipe(
       catchError((error: any) => {
-        console.log(error)
         if (error.status === 404) {
           this.toastr.error('Ayat not found');
         } else if (error.status === 401) {

@@ -45,22 +45,29 @@
           <td class="px-6 py-3">{{ ayat.arabic }}</td>
 
           <td class="px-6 py-3">{{ ayat.bengali_translate || '-' }}</td>
-
-          <!-- Show Keywords -->
           <td class="px-6 py-3">
             <ng-container *ngIf="ayat.keywords?.length; else noKeywords">
-          <span
-            *ngFor="let k of ayat.keywords"
-            class="inline-block bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs mr-1 mb-1"
-          >
-            {{ k.tag?.english_name }}, {{ k.tag?.bengali_name }}
-          </span>
+              <span
+                *ngFor="let k of ayat.keywords"
+                class="inline-flex items-center bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs mr-1 mb-1"
+              >
+                {{ k.tag?.english_name }}, {{ k.tag?.bengali_name }}
+                <!-- Delete button -->
+                <button
+                  (click)="deleteKeyword(k, ayat)"
+                  class="ml-1 text-red-600 hover:text-red-800 text-xs font-bold"
+                  title="Delete keyword"
+                >
+                  ✕
+                </button>
+              </span>
             </ng-container>
 
             <ng-template #noKeywords>
               <span class="text-gray-400 text-xs">No keywords</span>
             </ng-template>
           </td>
+
 
           <!-- Actions -->
           <td class="px-6 py-3 text-right">
@@ -88,6 +95,7 @@
 <div *ngIf="showKeywordModal" class="fixed inset-0 z-50 flex items-start justify-center mt-20 pointer-events-none">
   <!-- Modal Box -->
   <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6 pointer-events-auto">
+
     <button
       class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
       (click)="closeKeywordModal()"
@@ -99,15 +107,34 @@
       Add Keyword for Ayat #{{ selectedAyat?.ayat_no_english }}
     </h3>
 
-    <!-- Tag Select Dropdown -->
     <label class="block mb-2 text-gray-700 dark:text-gray-300">Select Tag</label>
     <ng-select name="tag_id"
                [(ngModel)]="keyword.tag_id"
-               class="w-full p-2 border border-gray-300 rounded-lg mb-4">
+               class="w-full rounded-lg mb-4">
       <ng-option *ngFor="let tag of tags" [value]="tag.id">
         {{ tag.english_name }} - {{ tag.bengali_name }}
       </ng-option>
     </ng-select>
+
+    <div *ngIf="keyword.tag_id === 0">
+
+      <label class="block mt-3 mb-1 text-gray-700 dark:text-gray-300">English Name</label>
+      <input
+        type="text"
+        [(ngModel)]="tag.english_name"
+        placeholder="Enter English name"
+        class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none dark:bg-gray-900 dark:text-white mb-3"
+      />
+
+      <label class="block mb-1 text-gray-700 dark:text-gray-300">Bengali Name</label>
+      <input
+        type="text"
+        [(ngModel)]="tag.bengali_name"
+        placeholder="Enter Bengali name"
+        class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none dark:bg-gray-900 dark:text-white mb-4"
+      />
+
+    </div>
 
     <button
       (click)="saveKeyword()"
@@ -115,6 +142,8 @@
     >
       Save Keyword
     </button>
+
   </div>
 </div>
+
 
